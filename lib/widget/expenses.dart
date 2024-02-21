@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:expense_tracker/modals/expense.dart';
@@ -32,7 +33,9 @@ class _ExpenseState extends State<Expenses> {
   void _openModal() {
     showModalBottomSheet(
       isScrollControlled: true,
+      useSafeArea: true,
       context: context,
+      constraints: const BoxConstraints(maxWidth: double.infinity),
       builder: (ctx) => NewExpense(addNewExpense),
     );
   }
@@ -65,6 +68,8 @@ class _ExpenseState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     Widget mainContent = const Center(
       child: Text('No Expenses Found. Start Adding Some!'),
     );
@@ -74,6 +79,7 @@ class _ExpenseState extends State<Expenses> {
     }
     return Scaffold(
       appBar: AppBar(
+        centerTitle: false,
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
@@ -82,12 +88,21 @@ class _ExpenseState extends State<Expenses> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Chart(expenses: registeredExpenses),
-          mainContent,
-        ],
-      ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(expenses: registeredExpenses),
+                mainContent,
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: Chart(expenses: registeredExpenses),
+                ),
+                mainContent,
+              ],
+            ),
     );
   }
 }
